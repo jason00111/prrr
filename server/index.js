@@ -42,7 +42,6 @@ server.start = function(port, callback){
   server.listen(port, callback)
 }
 
-
 if (process.env.NODE_ENV !== 'test'){
   server.start(process.env.PORT || '3000')
 }

@@ -139,7 +139,7 @@ export default class Commands {
       })
   }
 
-  markPullRequestAsClaimed(prrrId){
+  markPullRequestAsClaimed(prrr){
     return this.knex
       .table('pull_request_review_requests')
       .update({
@@ -147,7 +147,7 @@ export default class Commands {
         claimed_at: new Date,
         updated_at: new Date,
       })
-      .where('id', prrrId)
+      .where('id', prrr.id)
       .whereNull('claimed_by')
       .whereNull('claimed_at')
       .returning('*')
@@ -178,13 +178,13 @@ export default class Commands {
     })
   }
 
-  claimPrrr(prrrId){
-    return this.queries.getPrrrById(prrrId)
+  claimPrrr(){
+    return this.queries.getNextPendingPrrr()
       .then(prrr =>
         this.addCurrentUserToPrrrRepo(prrr)
-        .then(_ => this.sendReviewRequest(prrr))
+          .then(_ => this.sendReviewRequest(prrr))
+            .then(_ => this.markPullRequestAsClaimed(prrr))
       )
-      .then(_ => this.markPullRequestAsClaimed(prrrId))
   }
 
   unclaimPrrr(prrrId){
