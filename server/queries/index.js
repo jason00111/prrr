@@ -1,3 +1,4 @@
+import moment from 'moment'
 import knex from '../knex'
 import Github from '../Github'
 import Metrics from './metrics'
@@ -32,10 +33,20 @@ export default class Queries {
       .select('*')
       .from('pull_request_review_requests')
       .orderBy('created_at', 'desc')
-      .where({
-        archived_at: null,
-        completed_at: null,
-      })
+      .where({archived_at: null})
+      .whereBetween('claimed_at', this.theLastWeekRange())
+      .orWhereNull('claimed_at')
+  }
+
+  theLastWeekRange(){
+    return [
+      moment()
+        .startOf('isoWeek')
+        .format('YYYY-MM-DD'),
+      moment()
+        .endOf('isoWeek')
+        .format('YYYY-MM-DD'),
+    ]
   }
 
   getNextPendingPrrr(){

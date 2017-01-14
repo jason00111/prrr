@@ -12,9 +12,9 @@ import './index.sass'
 export default ({currentUser, prrrs}) => {
   const unclaimedPrrrs = prrrs.filter(prrr => !prrr.claimed_by)
 
-  const claimedPrrr = prrrs.find(prrr =>
-    prrr.claimed_by === currentUser.github_username
-  )
+  const claimedPrrr = prrrs
+    .filter(prrr => !prrr.completed_at)
+    .find(prrr => prrr.claimed_by === currentUser.github_username)
 
   const action = claimedPrrr
     ? <ClaimedPrrr prrr={claimedPrrr} />
