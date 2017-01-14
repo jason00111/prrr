@@ -183,7 +183,7 @@ export default class Commands {
       .then(prrr =>
         this.addCurrentUserToPrrrRepo(prrr)
           .then(_ => this.sendReviewRequest(prrr))
-            .then(_ => this.markPullRequestAsClaimed(prrr))
+          .then(_ => this.markPullRequestAsClaimed(prrr))
       )
   }
 
