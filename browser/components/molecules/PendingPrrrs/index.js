@@ -28,7 +28,12 @@ export default class PendingPrrrs extends Component {
         console.warn('Claim Error')
         console.error(error)
         this.setState({error})
+        this.startErrorTimeout()
       })
+  }
+
+  startErrorTimeout() {
+    document.setTimeout(() => this.setState({error: null}), 5000)
   }
 
   renderAdditionalHeaders(){
