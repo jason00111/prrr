@@ -50,3 +50,11 @@ createdb prrr-development
 createdb prrr-test
 knex migrate:latest
 ```
+
+## Specs for Tedious-Caracara
+
+Merge pull requests resolving thses issues:
+https://github.com/GuildCrafts/prrr/issues/51
+https://github.com/GuildCrafts/prrr/issues/52
+https://github.com/GuildCrafts/prrr/issues/39
+https://github.com/GuildCrafts/prrr/issues/31
