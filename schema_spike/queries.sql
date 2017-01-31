@@ -14,8 +14,11 @@ select * from review_requests join pull_requests on review_requests.pull_request
 
 getNextPendingPrrr:
 
-select * from review_requests join pull_requests on review_requests.pull_request_id = pull_requests.id order by created_at asc limit 1;
-
+select * from review_requests
+	join pull_requests on review_requests.pull_request_id = pull_requests.id
+	join reviews on reviews.review_request_id = review_requests.id
+	where reviews.abandoned_at is null or not reviews.user_id = ***currentUserId***
+	order by review_requests.created_at asc limit 1;
 
 
 getPrrrById:
@@ -47,7 +50,3 @@ select name from pull_requests
 	join requesters on requesters.review_request_id = review_requests.id
 	join users on requesters.user_id = users.id
 		where owner = 'git1';
-
-
-
-COMMANDS:

@@ -18,7 +18,8 @@ CREATE TABLE users(
 CREATE TABLE review_requests(
   id SERIAL PRIMARY KEY,
   pull_request_id SERIAL REFERENCES pull_requests(id),
-  created_at TIMESTAMP
+  created_at TIMESTAMP,
+  archived_at TIMESTAMP
 );
 
 CREATE TABLE requesters(
@@ -32,5 +33,5 @@ CREATE TABLE reviews(
   user_id SERIAL REFERENCES users(id),
   created_at TIMESTAMP,
   completed_at TIMESTAMP,
-  abandonded_at TIMESTAMP
+  abandoned_at TIMESTAMP
 );

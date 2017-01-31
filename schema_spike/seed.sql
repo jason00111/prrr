@@ -16,7 +16,7 @@ INSERT  INTO review_requests(pull_request_id, created_at)
 INSERT INTO requesters(review_request_id, user_id)
   VALUES (1, 2), (1, 3), (3, 1), (4, 3);
 
-INSERT INTO reviews(review_request_id, user_id, created_at, completed_at, abandonded_at)
+INSERT INTO reviews(review_request_id, user_id, created_at, completed_at, abandoned_at)
   VALUES  (1, 2, '1999-01-08 04:05:06', '2000-01-08 04:05:06', NULL),
           (2, 1, '1999-01-08 04:05:06', '1999-02-08 04:05:06', NULL),
           (3, 4, '1999-01-08 04:05:06', '2000-02-08 04:05:06', NULL),
