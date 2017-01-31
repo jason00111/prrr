@@ -16,8 +16,10 @@ reopenPrrr isn't needed bc if there is already a review, we don't care
   insert into review_requests(pull_request_id, created_at) values (1, '1998-01-08 04:05:06') returning *;
 
 
+
 createPrrr:
   return {...createPr(), ...createRr()}
+
 
 
 markPullRequestAsClaimed:  ***rename to make new review?
@@ -25,16 +27,30 @@ markPullRequestAsClaimed:  ***rename to make new review?
     values (1, 1, '2010-01-08 04:05:06') returning *;
 
 
+
 claimPrrr:
-  no change (except rename?)
-
-
-unclaimPrrr:
+  no change (except rename of markPullRequestAsClaimed?)
 
 
 
-unclaimStalePrrrs:
+unclaimPrrr:  (aka abandon review)
+  update reviews set abandoned_at = '2010-01-08 07:05:06' where id = 1;
+
+
+
+skipPrrr: ????
+
+
+
+unclaimStalePrrrs:  (aka abandon stale reviews)
+  update reviews set abandoned_at = null where created_at <= NOW() - '1 hour'::INTERVAL;
+
+
 
 archivePrrr:
+  update review_requests set archived_at = now() where id = 2;
+
+
 
 completePrrr:
+  update reviews set completed_at = now() where id = 4;
