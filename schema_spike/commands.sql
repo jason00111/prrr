@@ -1,8 +1,7 @@
 COMMANDS:
 
-reopenPrrr:
+reopenPrrr isn't needed bc if there is already a review, we don't care
 
-createPrrr:
   createPr:
     check with github to ensure pr exists
 
@@ -16,11 +15,23 @@ createPrrr:
   createRr:
   insert into review_requests(pull_request_id, created_at) values (1, '1998-01-08 04:05:06') returning *;
 
-markPullRequestAsClaimed:
+
+createPrrr:
+  return {...createPr(), ...createRr()}
+
+
+markPullRequestAsClaimed:  ***rename to make new review?
+  insert into reviews(review_request_id, user_id, created_at)
+    values (1, 1, '2010-01-08 04:05:06') returning *;
+
 
 claimPrrr:
+  no change (except rename?)
+
 
 unclaimPrrr:
+
+
 
 unclaimStalePrrrs:
 
