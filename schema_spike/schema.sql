@@ -5,33 +5,34 @@ CREATE DATABASE prrr_schema_spike;
 
 CREATE TABLE pull_requests(
   id SERIAL PRIMARY KEY,
-  owner VARCHAR(255),
-  repo VARCHAR(255),
-  number INTEGER
+  owner VARCHAR(255) NOT NULL,
+  repo VARCHAR(255) NOT NULL,
+  number INTEGER NOT NULL
 );
 
 CREATE TABLE users(
-  id SERIAL PRIMARY KEY,
+  github_username VARCHAR(255),
   name VARCHAR(255)
 );
 
-CREATE TABLE review_requests(
+CREATE TABLE prrrs(
   id SERIAL PRIMARY KEY,
-  pull_request_id SERIAL REFERENCES pull_requests(id),
+  pull_request_id SERIAL,
   created_at TIMESTAMP,
   archived_at TIMESTAMP
 );
 
 CREATE TABLE requesters(
-  review_request_id SERIAL REFERENCES review_requests(id),
-  user_id SERIAL REFERENCES users(id)
+  prrrs_id INTEGER NOT NULL,
+  github_username VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE reviews(
   id SERIAL PRIMARY KEY,
-  review_request_id SERIAL REFERENCES review_requests(id),
-  user_id SERIAL REFERENCES users(id),
-  created_at TIMESTAMP,
+  prrr_id INTEGER NOT NULL,
+  github_username VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP NOT NULL,
+  -- updated_at TIMESTAMP NOT NULL,
   completed_at TIMESTAMP,
   abandoned_at TIMESTAMP
 );

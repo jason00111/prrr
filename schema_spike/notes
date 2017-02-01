@@ -1,0 +1,28 @@
+
+
+ensure the migration works >>>
+
+dropdb prrr-development
+createdb prrr-development
+migrate up to the migration before your migration
+import production data
+run your new migration
+check that it worked manually
+
+
+delete abandoned prrrs table
+
+
+
+
+
+
+
+
+
+// multiple requesters per prrr
+// abandoned
+// multiple prrrs per pr
+
+
+make pr for deleting unused functions.

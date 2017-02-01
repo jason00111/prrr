@@ -1,7 +1,12 @@
 COMMANDS:
 
-reopenPrrr isn't needed bc if there is already a review, we don't care
+reopenPrrr isn't needed bc if there is already a review, we don't care  //can be deleted after refactor
 
+
+
+
+
+createPrrr:
   createPr:
     check with github to ensure pr exists
 
@@ -12,13 +17,11 @@ reopenPrrr isn't needed bc if there is already a review, we don't care
     otherwise,
     insert into pull_requests(owner, repo, number) values ('git2', '/url', 2) returning *;
 
-  createRr:
+  createPrrrNotPr:
   insert into review_requests(pull_request_id, created_at) values (1, '1998-01-08 04:05:06') returning *;
 
-
-
-createPrrr:
   return {...createPr(), ...createRr()}
+
 
 
 

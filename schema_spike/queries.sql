@@ -1,5 +1,4 @@
 QUERIES:
-
 getAllPrrrs:
 
 select * from review_requests join pull_requests on review_requests.pull_request_id = pull_requests.id;
@@ -11,39 +10,125 @@ getPrrrs:
 select * from review_requests join pull_requests on review_requests.pull_request_id = pull_requests.id where owner = 'git1';
 
 
+getInProgressPrrrs:
+
+SELECT
+	prrrs.*
+FROM
+	prrrs
+JOIN
+	pull_requests on prrrs.pull_request_id = pull_requests.id
+JOIN
+	reviews on reviews.prrr_id = prrrs.id
+WHERE
+  reviews.created_at IS NOT NULL
+AND
+  reviews.abandoned_at IS NULL
+AND
+  reviews.completed_at IS NULL
+
+
+
 
 getNextPendingPrrr:
 
-select * from review_requests
-	join pull_requests on review_requests.pull_request_id = pull_requests.id
-	join reviews on reviews.review_request_id = review_requests.id
-	where reviews.abandoned_at is null or not reviews.user_id = ***currentUserId***
-	order by review_requests.created_at asc limit 1;
+
+SELECT
+	*
+FROM
+	prrrs
+JOIN
+	pull_requests on prrrs.pull_request_id = pull_requests.id
+WHERE
+	prrrs.id NOT IN (
+		SELECT
+			prrrs.id
+		FROM
+			prrrs
+		JOIN
+			reviews on reviews.prrr_id = prrrs.id
+		WHERE
+		  reviews.created_at IS NOT NULL
+		AND
+		  reviews.abandoned_at IS NULL
+		AND
+		  reviews.completed_at IS NULL
+	)
+AND
+	prrrs.id NOT IN (
+		SELECT
+			prrrs.id
+		FROM
+			prrrs
+		JOIN
+			reviews on reviews.prrr_id = prrrs.id
+		WHERE
+		  reviews.completed_at IS NOT NULL
+	)
+AND
+	prrrs.id NOT IN (
+		SELECT
+			prrrs.id
+		FROM
+			prrrs
+		JOIN
+			reviews on reviews.prrr_id = prrrs.id
+		WHERE
+		  reviews.abandoned_at IS NOT NULL
+		AND
+          reviews.github_username = 'Jaredatron'
+	)
 
 
-getPrrrById:
 
-by pr id:
-select * from review_requests join pull_requests on review_requests.pull_request_id = pull_requests.id where pull_requests.id = 2;
+-- ??
+
+select * from prrrs
+FULL OUTER join pull_requests on prrrs.pull_request_id = pull_requests.id
+FULL OUTER join reviews on reviews.prrr_id = prrrs.id
+WHERE
+  reviews.created_at IS NULL
+OR
+(
+  reviews.created_at IS NOT NULL
+AND
+  reviews.abandoned_at IS NOT NULL
+AND NOT
+  reviews.github_username = 'Jasonatron'
+)
+--WHERE reviews.abandoned_at IS NULL
+--AND NOT reviews.github_username = 'Carlaatron'
+--AND reviews.created_at IS NULL
+
+-- ??
+
+-- select * from review_requests
+-- 	join pull_requests on review_requests.pull_request_id = pull_requests.id
+-- 	join reviews on reviews.review_request_id = review_requests.id
+-- 	where reviews.abandoned_at is null or not reviews.user_id = ***currentUserId***
+-- 	order by review_requests.created_at asc limit 1;
+--
+
+getPrrrById:  not being used!!!
 
 by rr id:
-select * from review_requests join pull_requests on review_requests.pull_request_id = pull_requests.id where review_requests.id = 2;
+select * from prrrs join pull_requests on review_requests.pull_request_id = pull_requests.id where review_requests.id = 2;
 
 
 
-getPrrrForPullRequest:
+getPrrrForPullRequest:  //this can be deleted
 
 select * from review_requests join pull_requests on review_requests.pull_request_id = pull_requests.id  where owner = 'git3' and repo = '/url3' and number = 3;
 
 
 
-getPullRequest: ****
+getPullRequest: //this is never being used
 
 select * from pull_requests where owner = 'git3' and repo = '/url3' and number = 3;
 
 
 
-getRequestorForPrrr:
+getRequestorForPrrr:  //this is never being used
 
 select name from pull_requests
 	join review_requests on review_requests.pull_request_id = pull_requests.id

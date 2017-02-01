@@ -1,23 +1,42 @@
-INSERT INTO pull_requests(owner, repo, number)
-  VALUES  ('git1', '/url1', 1),
-          ('git2', '/url2', 2),
-          ('git3', '/url3', 3),
-          ('git4', '/url4', 4);
+INSERT INTO
+  users(github_username, name)
+VALUES
+  ('Jaredatron', 'Jared'),
+  ('Jasonatron', 'Jason'),
+  ('Brianaatron', 'Briana'),
+  ('Carlaatron', 'Carla');
 
-INSERT INTO users(name)
-  VALUES ('Billy'), ('Bob'), ('Bro'), ('Dude');
 
-INSERT  INTO review_requests(pull_request_id, created_at)
-  VALUES  (1, '1999-01-08 04:05:06'),
-          (2, '2000-01-08 04:05:06'),
-          (3, '2001-01-08 04:05:09'),
-          (4, '2002-01-08 03:05:06');
+INSERT INTO
+  pull_requests(id, owner, repo, number)
+VALUES
+  (1, 'Jaredatron', 'thingatron', 10),
+  (2, 'Jasonatron', 'magicstuff', 20),
+  (3, 'Brianaatron', 'bashfiles', 30),
+  (4, 'GuildCrafts', 'suppertivethings', 40);
 
-INSERT INTO requesters(review_request_id, user_id)
-  VALUES (1, 2), (1, 3), (3, 1), (4, 3);
 
-INSERT INTO reviews(review_request_id, user_id, created_at, completed_at, abandoned_at)
-  VALUES  (1, 2, '1999-01-08 04:05:06', '2000-01-08 04:05:06', NULL),
-          (2, 1, '1999-01-08 04:05:06', '1999-02-08 04:05:06', NULL),
-          (3, 4, '1999-01-08 04:05:06', '2000-02-08 04:05:06', NULL),
-          (4, 3, '1999-01-08 04:05:06', NULL, '1999-01-08 04:05:07');
+INSERT INTO
+  prrrs(pull_request_id, created_at)
+VALUES
+  (1, '2017-01-01 04:05:06'),
+  (2, '2017-01-02 04:05:06'),
+  (3, '2017-01-03 04:05:06'),
+  (4, '2017-01-04 04:05:06');
+
+INSERT INTO
+  requesters(prrrs_id, github_username)
+VALUES
+  (1, 'Jaredatron'),
+  (1, 'Jasonatron'),
+  (2, 'Jasonatron'),
+  (3, 'Brianaatron'),
+  (4, 'Carlaatron');
+
+INSERT INTO
+  reviews(prrr_id, github_username, created_at, completed_at, abandoned_at)
+VALUES
+  (1, 'Brianaatron', '1999-01-08 04:00:06', '2000-01-08 04:05:06', NULL),
+  (2, 'Carlaatron', '1999-01-08 04:05:06', NULL, '2000-02-08 04:15:06'),
+  (2, 'Jaredatron', '1999-01-08 05:05:06', NULL, NULL),
+  (3, 'Jasonatron', '1999-01-08 04:05:06', NULL, '2000-02-08 04:05:06');
