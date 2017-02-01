@@ -34,7 +34,7 @@ claimPrrr:
 
 
 unclaimPrrr:  (aka abandon review)
-  update reviews set abandoned_at = '2010-01-08 07:05:06' where id = 1;
+  update reviews set abandoned_at = now() where id = 1;
 
 
 
@@ -42,8 +42,8 @@ skipPrrr: ????
 
 
 
-unclaimStalePrrrs:  (aka abandon stale reviews)
-  update reviews set abandoned_at = null where created_at <= NOW() - '1 hour'::INTERVAL;
+unclaimStalePrrrs:  (aka abandon stale reviews)  ***ask jared
+  update reviews set abandoned_at = now() where created_at <= NOW() - '1 hour'::INTERVAL;
 
 
 
