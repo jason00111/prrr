@@ -25,7 +25,7 @@ VALUES
   (4, '2017-01-04 04:05:06');
 
 INSERT INTO
-  requesters(prrrs_id, github_username)
+  requesters(prrr_id, github_username)
 VALUES
   (1, 'Jaredatron'),
   (1, 'Jasonatron'),
@@ -34,9 +34,10 @@ VALUES
   (4, 'Carlaatron');
 
 INSERT INTO
-  reviews(prrr_id, github_username, created_at, completed_at, abandoned_at)
+  reviews(prrr_id, github_username, created_at, completed_at, skipped_at)
 VALUES
   (1, 'Brianaatron', '1999-01-08 04:00:06', '2000-01-08 04:05:06', NULL),
   (2, 'Carlaatron', '1999-01-08 04:05:06', NULL, '2000-02-08 04:15:06'),
   (2, 'Jaredatron', '1999-01-08 05:05:06', NULL, NULL),
-  (3, 'Jasonatron', '1999-01-08 04:05:06', NULL, '2000-02-08 04:05:06');
+  (3, 'Jasonatron', '1999-01-08 04:05:06', NULL, '2000-02-08 04:05:06'),
+  (3, 'Jaredatron', '1999-01-08 05:05:06', NULL, '1999-01-08 05:10:06');

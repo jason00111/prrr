@@ -23,7 +23,7 @@ CREATE TABLE prrrs(
 );
 
 CREATE TABLE requesters(
-  prrrs_id INTEGER NOT NULL,
+  prrr_id INTEGER NOT NULL,
   github_username VARCHAR(255) NOT NULL
 );
 
@@ -34,5 +34,5 @@ CREATE TABLE reviews(
   created_at TIMESTAMP NOT NULL,
   -- updated_at TIMESTAMP NOT NULL,
   completed_at TIMESTAMP,
-  abandoned_at TIMESTAMP
+  skipped_at TIMESTAMP
 );

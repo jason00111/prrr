@@ -75,7 +75,7 @@ export default class Commands {
         throw error
       })
       .then(pullRequest =>
-        this.queries.getPrrrForPullRequest(pullRequest)
+        this.queries.getPrrrForPullRequest(pullRequest) //delete this function if it's not being used
           .then(prrr => ({prrr, pullRequest}))
       )
       .then(({prrr, pullRequest}) => {

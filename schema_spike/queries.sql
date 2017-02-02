@@ -5,9 +5,26 @@ select * from review_requests join pull_requests on review_requests.pull_request
 
 
 
-getPrrrs: --done
+getPrrrs: --done wip
 
-select * from review_requests join pull_requests on review_requests.pull_request_id = pull_requests.id where owner = 'git1';
+SELECT
+	*
+FROM
+	pull_requests
+FULL JOIN
+	prrrs ON pull_requests.id = prrrs.pull_request_id
+FULL JOIN
+	requesters ON requesters.prrrs_id = prrrs.id
+FULL JOIN
+	reviews ON reviews.prrr_id = prrrs.id
+WHERE
+	requesters.github_username = 'Jaredatron'
+OR
+	(
+		reviews.github_username = 'Jaredatron'
+	AND
+		reviews.skipped_at IS NULL
+	);
 
 
 getInProgressPrrrs:
@@ -116,7 +133,7 @@ select * from prrrs join pull_requests on review_requests.pull_request_id = pull
 
 
 
-getPrrrForPullRequest:  //this can be deleted
+getPrrrForPullRequest:  //this can be deleted after refactor
 
 select * from review_requests join pull_requests on review_requests.pull_request_id = pull_requests.id  where owner = 'git3' and repo = '/url3' and number = 3;
 
