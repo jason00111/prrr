@@ -1,113 +1,125 @@
 exports.up = knex => {
   return Promise.all([
 
-
-
     knex.schema.createTable('pull_requests', table => {
-      table.integer('id').primary()
+      table.increments('id').primary()
       table.string('owner').notNullable()
       table.string('repo').notNullable()
       table.integer('number').notNullable()
-    })
+    }),
 
     knex.schema.createTable('prrrs', table => {
-      table.integer('id').primary()
-      table.integer('pull_request_id')
-           .references('id').inTable('pull_requests') //remove
-      table.timestamps()
+      table.increments('id').primary()
+      table.integer('pull_request_id').notNullable()
       table.timestamp('archived_at')
-    })
+      table.timestamps()
+    }),
 
     knex.schema.createTable('requesters', table => {
-      table.number('prrr_id')
-           .references('id').inTable('prrrs')
-      table.number('github_username')
-           .references('github_username').inTable('users')
-    })
+      table.integer('prrr_id').notNullable()
+      table.string('github_username').notNullable()
+    }),
 
     knex.schema.createTable('reviews', table => {
-      table.integer('id').primary()
-      table.integer('prrr_id')
-           .references('id').inTable('prrrs')
-      table.integer('github_username')
-           .references('github_username').inTable('users')
-      table.timestamps()
+      table.increments('id').primary()
+      table.integer('prrr_id').notNullable()
+      table.string('github_username').notNullable()
       table.timestamp('completed_at')
-      table.timestamp('abandoned_at')
+      table.timestamp('skipped_at')
+      table.timestamps()
     })
 
   ])
   .then(_ => knex.select('*').from('pull_request_review_requests'))
-  .then(prrrs => {
+  .then(oldPrrrs => {
 
-    const queries = prrrs.map(prrr => {
-      return knext........
-    })
-    return Promise.all(queries)
-  })
-  .then(_ => {
+    const queries1 = oldPrrrs.map(oldPrrr => {
+      return knex.table('pull_requests')
+        .insert({
+          owner: oldPrrr.owner,
+          repo: oldPrrr.repo,
+          number: oldPrrr.number
+        })
+        .returning('id')
+        .then(returnedPRArray => {
+          const pullRequestId = returnedPRArray[0]
 
-  })
+          return Promise.all([
+            knex.table('prrrs')
+              .insert({
+                pull_request_id: pullRequestId,
+                created_at: oldPrrr.created_at,
+                archived_at: oldPrrr.archived_at
+              })
+              .returning('id'),
 
-*****
-  const prrrs = knex.select('*').from('pull_request_review_requests')
+            knex.select('*').from('skipped_prrrs')
+          ])
+        })
+        .then(resultsArray => {
+          const returnedPrrrArray = resultsArray[0]
+          const returnedSkipArray = resultsArray[1]
 
-  prrrs.forEach(prrr => {
-    return knex.table('pull_requests')
-      .insert({
-        owner: prrr.owner
-        repo: prrr.repo
-        number: prrr.number
-      })
-      .returning(['id', 'created_at', 'archived_at'])
-      .then(returnedPRArray => {
-        const pullRequest = returnedArray[0]
+          const newPrrrId = returnedPrrrArray[0]
 
-        return knex.table('prrrs')
-          .insert({
-            pull_request_id: pullRequest.id,
-            created_at: prrr.created_at,
-            archived_at: prrr.archived_at
-          })
-          .returning('id')
-      })
-      .then(returnedReviewRequestArray => {
-        const reviewRequestId = returnedReviewRequestArray[0].id
+          const filteredSkippedArray = returnedSkipArray.filter(skipped =>
+            skipped.prrr_id === oldPrrr.id
+          )
 
-        const queries = []
-        queries.push(knex.table('requesters')
-          .insert({
-            prrr_id: reviewRequestId,
-            github_username: prrr.owner
-          })
-        )
+          const queries2 = []
 
-        if (prrr.owner !== prrr.requested_by) {
-          queries.push(
-            knex.table('requesters')
+          filteredSkippedArray.forEach(skipped =>
+            queries2.push(knex.table('reviews')
+              .insert({
+                prrr_id: newPrrrId,
+                github_username: skipped.github_username,
+                skipped_at: skipped.skipped_at,
+                created_at: skipped.skipped_at
+              })
+            )
+          )
+
+          queries2.push(knex.table('requesters')
             .insert({
-              prrr_id: reviewRequestId,
-              github_username: prrr.requested_by
+              prrr_id: newPrrrId,
+              github_username: oldPrrr.owner
             })
           )
-        }
 
-        queries.push(
-          knex.table('reviews')
-            .insert({
-              prrr_id: reviewRequestId,
-              github_username: prrr.claimed_by,
-              created_at: prrr.claimed_at,
-              completed_at: prrr.completed_at
-            })
-        )
+          if (oldPrrr.owner !== oldPrrr.requested_by) {
+            queries2.push(
+              knex.table('requesters')
+              .insert({
+                prrr_id: newPrrrId,
+                github_username: oldPrrr.requested_by
+              })
+            )
+          }
 
-        return Primise.all(queries)
-      })
+          if (oldPrrr.claimed_by) {
+            queries2.push(
+              knex.table('reviews')
+                .insert({
+                  prrr_id: newPrrrId,
+                  github_username: oldPrrr.claimed_by,
+                  created_at: oldPrrr.claimed_at,
+                  completed_at: oldPrrr.completed_at
+                })
+            )
+          }
 
+          return Promise.all(queries2)
+        })
+
+    })
+
+    return Promise.all(queries1)
   })
-
-  knex.schema.dropTable('pull_request_review_requests')
+  .then(_ => Promise.all([
+    knex.schema.dropTable('pull_request_review_requests'),
+    knex.schema.dropTable('skipped_prrrs')
+  ]))
+  .catch(error => console.error('ERROR:', error))
 }
 
 exports.down = knex => {
