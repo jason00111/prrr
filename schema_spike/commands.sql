@@ -6,7 +6,7 @@ reopenPrrr isn't needed bc if there is already a review, we don't care  //can be
 
 
 
-createPrrr:
+createPrrr: //done
   createPr:
     check with github to ensure pr exists
 
@@ -18,7 +18,7 @@ createPrrr:
     insert into pull_requests(owner, repo, number) values ('git2', '/url', 2) returning *;
 
   createPrrrNotPr:
-  insert into review_requests(pull_request_id, created_at) values (1, '1998-01-08 04:05:06') returning *;
+  insert into prrrs(pull_request_id, created_at) values (1, '1998-01-08 04:05:06') returning *;
 
   return {...createPr(), ...createRr()}
 

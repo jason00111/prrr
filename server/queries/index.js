@@ -56,6 +56,21 @@ export default class Queries {
       .then(convertArrayOfPrrrsIntoHashById)
   }
 
+  getPrrrById(prrrId){
+    return this.knex
+      .select('*')
+      .from('pull_requests')
+      .fullOuterJoin('prrrs')
+      .on('pull_requests.id', '=', 'prrrs.pull_request_id')
+      .fullOuterJoin('requesters')
+      .on('requesters.prrr_id', '=', 'prrrs.id')
+      .fullOuterJoin('reviews')
+      .on('reviews.prrr_id', '=', 'prrrs.id')
+      .where('prrr.id', prrrId)
+
+      //************** 
+  }
+
   getNextPendingPrrr(){
     return this.knex
       .select('*')
@@ -89,18 +104,6 @@ export default class Queries {
         .whereNot('reviews.skipped_at', null)
         .where('reviews.github_username', this.currentUser.github_username)
       )
-  }
-
-  getPrrrForPullRequest(pullRequest){
-    return this.knex
-      .select('*')
-      .from('pull_request_review_requests')
-      .where({
-        owner: pullRequest.base.repo.owner.login,
-        repo: pullRequest.base.repo.name,
-        number: pullRequest.number,
-      })
-      .first()
   }
 
   metricsForWeek(week){
