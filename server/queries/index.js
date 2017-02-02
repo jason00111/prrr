@@ -31,64 +31,57 @@ export default class Queries {
   getAllPrrrs(){
     return this.knex
       .select('*')
-      .from('pull_request_review_requests')
+      .from('prrrs')
+      .join('pull_requests')
+      .on('prrrs.pull_request_id', '=', 'pull_requestas.id')
       .then(convertArrayOfPrrrsIntoHashById)
   }
 
   getPrrrs(){
     return this.knex
       .select('*')
-      .from('pull_request_review_requests')
-      .where({
-        archived_at: null,
-        claimed_at: null,
-        claimed_by: null,
-        completed_at: null,
-      })
-      .orWhere({
-        requested_by: this.currentUser.github_username,
-      })
-      .orWhere({
-        claimed_by: this.currentUser.github_username,
-      })
-      .orderBy('created_at', 'desc')
+      .from('prrrs')
+      .join('pull_requests')
+      .on('prrrs.pull_request_id', '=', 'pull_requests.id')
+      .where('skipped_at', null)
+      .andWhere('owner', this.currentUser.github_username)
+      .orderBy('created_at')
       .then(convertArrayOfPrrrsIntoHashById)
-      .then(prrrs => {
-        return this.knex
-          .select('*')
-          .from('skipped_prrrs')
-          .whereIn('prrr_id', Object.keys(prrrs))
-          .where('github_username', this.currentUser.github_username)
-          .then(skippedPrrrs => {
-            skippedPrrrs.forEach(skip => {
-              prrrs[skip.prrr_id].skipped = true
-            })
-            return prrrs
-          })
-      })
 
   }
 
   getNextPendingPrrr(){
-    var skipped_prrrs = this.knex
-      .select('prrr_id')
-      .from('skipped_prrrs')
-      .where('github_username', this.currentUser.github_username)
-
     return this.knex
-      .select(knex.raw('DISTINCT("pull_request_review_requests".*)'))
-      .from('pull_request_review_requests')
-      .leftJoin('skipped_prrrs', 'pull_request_review_requests.id', 'skipped_prrrs.prrr_id')
-      .where({
-        archived_at: null,
-        completed_at: null,
-        claimed_by: null,
-        claimed_at: null,
+      .select('*')
+      .from('prrrs')
+      .join('pull_requests')
+      .on('prrrs.pull_request_id', '=', 'pull_request_id')
+      .whereNotIn('prrrs.id', {
+        .select('prrrs.id')
+        .from('prrrs')
+        .join('reviews')
+        .on('reviews.prrr_id = prrrs.id')
+        .whereNot('reviews.created_at', null)
+        .where('reviews.skipped_at', null)
+        .where('reviews.completed_at', null)
       })
-      .whereNot('requested_by', this.currentUser.github_username)
-      .whereNotIn('id', skipped_prrrs)
-      .orderBy('created_at', 'asc')
-      .first()
+      .whereNotIn('prrrs.id',{
+        .select('prrrs.id')
+        .from('prrrs')
+        .join('reviews')
+        .on('reviews.prrr_id', '=', 'pull_request_id')
+        .whereNot('reviews.prrr_id', null)
+      })
+      .whereNot('prrrs.id', {
+        .select('prrrs.id')
+        .from('prrrs')
+        .join('reviews')
+        .on('reviews.prrr_id', '=', 'prrrs.id')
+        .whereNot('reviews.skipped_at', null)
+        .where('reviews.github_username', this.currentUser.github_username)
+      })
+
+
   }
 
   getPrrrForPullRequest(pullRequest){

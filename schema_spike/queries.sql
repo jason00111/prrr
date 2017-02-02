@@ -1,11 +1,11 @@
 QUERIES:
-getAllPrrrs:
+getAllPrrrs: --done
 
 select * from review_requests join pull_requests on review_requests.pull_request_id = pull_requests.id;
 
 
 
-getPrrrs:
+getPrrrs: --done
 
 select * from review_requests join pull_requests on review_requests.pull_request_id = pull_requests.id where owner = 'git1';
 
@@ -30,7 +30,7 @@ AND
 
 
 
-getNextPendingPrrr:
+getNextPendingPrrr: //done
 
 
 SELECT
