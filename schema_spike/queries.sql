@@ -8,7 +8,16 @@ select * from review_requests join pull_requests on review_requests.pull_request
 getPrrrs: --done wip
 
 SELECT
-	*
+	prrrs.archived_at,
+	reviews.created_at as claimed_at,
+	reviews.github_username as claimed_by,
+	reviews.completed_at,
+	prrrs.created_at,
+	prrrs.id,
+	pull_requests.number,
+	pull_requests.owner,
+	pull_requests.repo,
+	requesters.github_username as requested_by
 FROM
 	pull_requests
 FULL JOIN
@@ -67,7 +76,7 @@ WHERE
 		WHERE
 		  reviews.created_at IS NOT NULL
 		AND
-		  reviews.abandoned_at IS NULL
+		  reviews.skipped_at IS NULL
 		AND
 		  reviews.completed_at IS NULL
 	)
@@ -91,7 +100,7 @@ AND
 		JOIN
 			reviews on reviews.prrr_id = prrrs.id
 		WHERE
-		  reviews.abandoned_at IS NOT NULL
+		  reviews.skipped_at IS NOT NULL
 		AND
           reviews.github_username = 'Jaredatron'
 	)
@@ -152,3 +161,62 @@ select name from pull_requests
 	join requesters on requesters.review_request_id = review_requests.id
 	join users on requesters.user_id = users.id
 		where owner = 'git1';
+
+		/////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+select
+	*
+from
+	"prrrs"
+inner join
+	"pull_requests" on "prrrs"."pull_request_id" = "pull_request"."id"
+where "prrrs"."id"
+not in (
+	select
+		"prrrs"."id"
+	from
+		"prrrs"
+	inner join
+		"reviews" on "reviews"."prrr_id" = "prrrs"."id"
+	where
+		"reviews"."created_at" is not null
+	and
+		"reviews"."skipped_at" is null
+	and
+		"reviews"."completed_at" is null
+)
+
+and "prrrs"."id" not in (
+	select
+		"prrrs"."id"
+	from
+		"prrrs"
+	inner join
+		"reviews" on "reviews"."prrr_id" = "prrrs"."id"
+	where
+		"reviews"."completed_at" is not null
+)
+
+and "prrrs"."id" not in (
+	select
+		"prrrs"."id"
+	from
+		"prrrs"
+	inner join
+		"reviews" on "reviews"."prrr_id" = "prrrs"."id"
+	where
+		"reviews"."skipped_at" is not null
+	and
+		"reviews"."github_username" = ?
+)

@@ -32,78 +32,77 @@ export default class Queries {
     return this.knex
       .select('*')
       .from('prrrs')
-      .join('pull_requests')
-      .on('prrrs.pull_request_id', '=', 'pull_requestas.id')
+      .join('pull_requests', 'prrrs.pull_request_id', '=', 'pull_requestas.id')
       .then(convertArrayOfPrrrsIntoHashById)
   }
 
   getPrrrs(){
+    const github_username = this.currentUser.github_username
     return this.knex
-      .select('*')
+      .select(
+        'prrrs.archived_at',
+        'reviews.created_at as claimed_at',
+        'reviews.github_username as claimed_by',
+        'reviews.completed_at',
+        'prrrs.created_at',
+        'prrrs.id',
+        'pull_requests.number',
+        'pull_requests.owner',
+        'pull_requests.repo',
+        'requesters.github_username as requested_by')
       .from('pull_requests')
-      .fullOuterJoin('prrrs')
-      .on('pull_requests.id', '=', 'prrrs.pull_request_id')
-      .fullOuterJoin('requesters')
-      .on('requesters.prrr_id', '=', 'prrrs.id')
-      .fullOuterJoin('reviews')
-      .on('reviews.prrr_id', '=', 'prrrs.id')
-      .where('requesters.github_username', this.currentUser.github_username)
-      .orWhere(function () {
+      .fullOuterJoin('prrrs', 'pull_requests.id', '=', 'prrrs.pull_request_id')
+      .fullOuterJoin('requesters', 'requesters.prrr_id', '=', 'prrrs.id')
+      .fullOuterJoin('reviews', 'reviews.prrr_id', '=', 'prrrs.id')
+      .where('requesters.github_username', github_username)
+      .orWhere(function() {
         this
-        .where('reviews.github_username', this.currentUser.github_username)
-        .where('reviews.skipped_at', null)
+          .where('reviews.github_username', github_username)
+          .where('reviews.skipped_at', null)
       })
       .then(convertArrayOfPrrrsIntoHashById)
   }
 
-  getPrrrById(prrrId){
+  getPrrrById(prrrId){  //this may need to return more information
     return this.knex
       .select('*')
       .from('pull_requests')
-      .fullOuterJoin('prrrs')
-      .on('pull_requests.id', '=', 'prrrs.pull_request_id')
-      .fullOuterJoin('requesters')
-      .on('requesters.prrr_id', '=', 'prrrs.id')
-      .fullOuterJoin('reviews')
-      .on('reviews.prrr_id', '=', 'prrrs.id')
-      .where('prrr.id', prrrId)
-
-      //************** 
+      .join('prrrs', 'pull_requests.id', '=', 'prrrs.pull_request_id')
+      .where('prrrs.id', prrrId)
+      .then(firstRecord)
   }
 
   getNextPendingPrrr(){
     return this.knex
       .select('*')
       .from('prrrs')
-      .join('pull_requests')
-      .on('prrrs.pull_request_id', '=', 'pull_request.id')
+      .join('pull_requests', 'prrrs.pull_request_id', '=', 'pull_requests.id')
       .whereNotIn('prrrs.id',
         this.knex
-        .select('prrrs.id')
-        .from('prrrs')
-        .join('reviews')
-        .on('reviews.prrr_id', '=', 'prrrs.id')
-        .whereNot('reviews.created_at', null)
-        .where('reviews.skipped_at', null)
-        .where('reviews.completed_at', null)
+          .select('prrrs.id')
+          .from('prrrs')
+          .join('reviews', 'reviews.prrr_id', '=', 'prrrs.id')
+          .whereNot('reviews.created_at', null)
+          .where('reviews.skipped_at', null)
+          .where('reviews.completed_at', null)
       )
       .whereNotIn('prrrs.id',
         this.knex
-        .select('prrrs.id')
-        .from('prrrs')
-        .join('reviews')
-        .on('reviews.prrr_id', '=', 'prrrs.id')
-        .whereNot('reviews.completed_at', null)
+          .select('prrrs.id')
+          .from('prrrs')
+          .join('reviews', 'reviews.prrr_id', '=', 'prrrs.id')
+          .whereNot('reviews.completed_at', null)
       )
-      .whereNot('prrrs.id',
+      .whereNotIn('prrrs.id',
         this.knex
-        .select('prrrs.id')
-        .from('prrrs')
-        .join('reviews')
-        .on('reviews.prrr_id', '=', 'prrrs.id')
-        .whereNot('reviews.skipped_at', null)
-        .where('reviews.github_username', this.currentUser.github_username)
+          .select('prrrs.id')
+          .from('prrrs')
+          .join('reviews', 'reviews.prrr_id', '=', 'prrrs.id')
+          .whereNot('reviews.skipped_at', null)
+          .where('reviews.github_username', this.currentUser.github_username)
       )
+      .orderBy('prrrs.created_at')
+      .then(firstRecord)
   }
 
   metricsForWeek(week){
@@ -116,3 +115,5 @@ const convertArrayOfPrrrsIntoHashById = prrrs =>
     prrrs[prrr.id] = prrr
     return prrrs
   }, {})
+
+const firstRecord = records => records[0]

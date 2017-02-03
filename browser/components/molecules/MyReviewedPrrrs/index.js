@@ -39,6 +39,7 @@ export default class MyReviewedPrrrs extends Component {
         moment(b.created_at).valueOf() -
         moment(a.created_at).valueOf()
       )
+    console.log('inside MyReviewedPrrrs this.props.prrrs.reviewdByMe:', this.props.prrrs.reviewdByMe)
     return <div>
       <PrrrsTable
         className="MyReviewedPrrrs"

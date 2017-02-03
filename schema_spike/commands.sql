@@ -36,8 +36,12 @@ claimPrrr:
 
 
 
-unclaimPrrr:  (aka abandon review)
-  update reviews set abandoned_at = now() where id = 1;
+unclaimPrrr:  (aka abandon review)  //done
+  DELETE FROM
+  	reviews
+  WHERE
+  	id = 3
+
 
 
 

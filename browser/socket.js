@@ -35,6 +35,7 @@ on('updateSession', (session) => {
 })
 
 on('initialPrrrs', (newPrrrs) => {
+  console.log('Inside initialPrrrs newPrrrs:', newPrrrs)
   const prrrs = state.get().prrrs || {}
   Object.keys(newPrrrs).forEach(prrrId => {
     prrrs[prrrId] = newPrrrs[prrrId]

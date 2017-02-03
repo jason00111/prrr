@@ -147,7 +147,7 @@ const initializeConnection = (socket) => {
         }
       })
       .catch(error => {
-        reportError(`claiming Prrr ${prrrId}`, error)
+        reportError(`claiming Prrr prrrId`, error)
       })
   })
 

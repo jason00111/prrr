@@ -25,4 +25,8 @@ delete abandoned prrrs table
 // multiple prrrs per pr
 
 
-make pr for deleting unused functions.
+
+
+
+
+git push heroku HEAD:master
