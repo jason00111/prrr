@@ -58,3 +58,17 @@ https://github.com/GuildCrafts/prrr/issues/51
 https://github.com/GuildCrafts/prrr/issues/52
 https://github.com/GuildCrafts/prrr/issues/39
 https://github.com/GuildCrafts/prrr/issues/31
+
+## Naming Convention
+
+Pull Request: A fetch of the pull request from github belonging to the client
+
+Prrr: Pull Request Review Request
+
+Unclaim: A reviewer has claimed a prrr and unclaimed it. After being unclaimed, they can be a reviewer for that prrr again.
+
+Skipped : A reviewer has claimed a prrr and skipped it. Once skipped, the reviewer can no longer be a reviewer for that prrr again.
+
+
+
+
